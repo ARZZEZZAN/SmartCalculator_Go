@@ -27,7 +27,7 @@ type Stack struct {
 	value    float64
 	priority int64
 	typeLex  int64
-	next     *Stack
+	Next     *Stack
 }
 
 func (stack *Stack) Push(value float64, typeLex int64, priority int64) {
@@ -35,18 +35,18 @@ func (stack *Stack) Push(value float64, typeLex int64, priority int64) {
 	tmp.value = value
 	tmp.typeLex = typeLex
 	tmp.priority = priority
-	tmp.next = stack.next
-	stack.next = &tmp
+	tmp.Next = stack.Next
+	stack.Next = &tmp
 }
 
 func (stack *Stack) Pop() {
-	if stack.next != nil {
-		stack.next = stack.next.next
+	if stack.Next != nil {
+		stack.Next = stack.Next.Next
 	}
 }
 
 func (stack *Stack) Top() *Stack {
-	tmp := stack.next
+	tmp := stack.Next
 	return tmp
 }
 func (stack *Stack) SetStack(value float64, typeLex int64, priority int64) {

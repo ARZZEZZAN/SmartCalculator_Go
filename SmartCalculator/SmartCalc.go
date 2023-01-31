@@ -30,6 +30,12 @@ func parseLexemes(str *string) (List.Stack, error) {
 	} else if (*str)[0] == '^' {
 		result.SetStack(0, List.POW_LEXEME, 3)
 		*str = (*str)[1:]
+	} else if (*str)[0] == '(' {
+		result.SetStack(0, List.LEFTScobe_LEXEME, -1)
+		*str = (*str)[1:]
+	} else if (*str)[0] == ')' {
+		result.SetStack(0, List.RIGHTScobe_LEXEME, -1)
+		*str = (*str)[1:]
 	} else if (*str)[0:3] == "mod" {
 		result.SetStack(0, List.MOD_LEXEME, 3)
 		*str = (*str)[3:]
@@ -62,67 +68,6 @@ func parseLexemes(str *string) (List.Stack, error) {
 		*str = (*str)[4:]
 	}
 	return result, err
-	//if (lexem[i] == 'x') {
-	//	s21_set_structLexeme(&result, X_LEXEME, 0, 0);
-	//	i++;
-	//} else if (lexem[i] == '+') {
-	//	s21_set_structLexeme(&result, PLUS_LEXEME, 1, 0);
-	//	i++;
-	//} else if (lexem[i] == '-') {
-	//	s21_set_structLexeme(&result, MINUS_LEXEME, 1, 0);
-	//	i++;
-	//} else if (lexem[i] == '/') {
-	//	s21_set_structLexeme(&result, DIV_LEXEME, 2, 0);
-	//	i++;
-	//} else if (lexem[i] == '*') {
-	//	s21_set_structLexeme(&result, MUL_LEXEME, 2, 0);
-	//	i++;
-	//} else if (lexem[i] == '^') {
-	//	s21_set_structLexeme(&result, POW_LEXEME, 3, 0);
-	//	i++;
-	//} else if (lexem[i] == 'm' && lexem[i + 1] == 'o' && lexem[i + 2] == 'd') {
-	//	s21_set_structLexeme(&result, MOD_LEXEME, 3, 0);
-	//	i += 3;
-	//} else if (lexem[i] == 's' && lexem[i + 1] == 'i' && lexem[i + 2] == 'n') {
-	//	s21_set_structLexeme(&result, SIN_LEXEME, 4, 0);
-	//	i += 3;
-	//} else if (lexem[i] == 'c' && lexem[i + 1] == 'o' && lexem[i + 2] == 's') {
-	//	s21_set_structLexeme(&result, COS_LEXEME, 4, 0);
-	//	i += 3;
-	//} else if (lexem[i] == 't' && lexem[i + 1] == 'a' && lexem[i + 2] == 'n') {
-	//	s21_set_structLexeme(&result, TAN_LEXEME, 4, 0);
-	//	i += 3;
-	//} else if (lexem[i] == 'l' && lexem[i + 1] == 'o' && lexem[i + 2] == 'g') {
-	//	s21_set_structLexeme(&result, LOG_LEXEME, 4, 0);
-	//	i += 3;
-	//} else if (lexem[i] == 'l' && lexem[i + 1] == 'n') {
-	//	s21_set_structLexeme(&result, LN_LEXEME, 4, 0);
-	//	i += 2;
-	//} else if (lexem[i] == 'a' && lexem[i + 1] == 's' && lexem[i + 2] == 'i' &&
-	//	lexem[i + 3] == 'n') {
-	//	s21_set_structLexeme(&result, ASIN_LEXEME, 4, 0);
-	//	i += 4;
-	//} else if (lexem[i] == 'a' && lexem[i + 1] == 'c' && lexem[i + 2] == 'o' &&
-	//	lexem[i + 3] == 's') {
-	//	s21_set_structLexeme(&result, ACOS_LEXEME, 4, 0);
-	//	i += 4;
-	//} else if (lexem[i] == 'a' && lexem[i + 1] == 't' && lexem[i + 2] == 'a' &&
-	//	lexem[i + 3] == 'n') {
-	//	s21_set_structLexeme(&result, ATAN_LEXEME, 4, 0);
-	//	i += 4;
-	//} else if (lexem[i] == 's' && lexem[i + 1] == 'q' && lexem[i + 2] == 'r' &&
-	//	lexem[i + 3] == 't') {
-	//	s21_set_structLexeme(&result, SQRT_LEXEME, 4, 0);
-	//	i += 4;
-	//} else if (lexem[i] == '(') {
-	//	s21_set_structLexeme(&result, LEFTScobe_LEXEME, -1, 0);
-	//	i++;
-	//} else if (lexem[i] == ')') {
-	//	s21_set_structLexeme(&result, RIGHTScobe_LEXEME, -1, 0);
-	//	i++;
-	//}
-	//*end = (char *)&lexem[i];
-	//return result;
 }
 func findAndRemoveNumber(s *string) (float64, error) {
 	// Use a regular expression to find the first number in the string
@@ -148,11 +93,8 @@ func findAndRemoveNumber(s *string) (float64, error) {
 func smartCalc(str string) {
 	numbers := List.Stack{}
 	//operations := List.Stack{}
-	//tmp := List.Stack{}
-
-	//var end string
-	var i int
-	for i < len(str) {
+	rangeStr := len(str)
+	for i := 0; i <= rangeStr; i++ {
 		str = strings.ReplaceAll(str, " ", "")
 		// parse numbers
 		value, err := findAndRemoveNumber(&str)
@@ -162,10 +104,13 @@ func smartCalc(str string) {
 			numbers.Push(value, List.DIG_LEXEME, 0)
 		}
 		// parse lexemes
-		tmp, err := parseLexemes(&str)
-		fmt.Printf("Tmp: %v\n", tmp)
-		fmt.Printf("Str: %v\n", str)
-		break
+		if len(str) >= 1 {
+			tmp, _ := parseLexemes(&str)
+			fmt.Printf("Tmp: %v\n", tmp)
+		}
+		if len(str) == 0 {
+			break
+		}
 	}
 }
 
