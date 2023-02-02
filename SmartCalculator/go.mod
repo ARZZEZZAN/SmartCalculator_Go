@@ -4,4 +4,9 @@ go 1.19
 
 replace List => ./List
 
-require List v0.0.0-00010101000000-000000000000 // indirect
+replace Calculations => ./Calculations
+
+require (
+	Calculations v0.0.0-00010101000000-000000000000 // indirect
+	List v0.0.0-00010101000000-000000000000 // indirect
+)

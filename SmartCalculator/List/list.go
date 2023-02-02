@@ -55,5 +55,13 @@ func (stack *Stack) SetStack(value float64, typeLex int64, priority int64) {
 		typeLex:  typeLex,
 		priority: priority,
 	}
-
+}
+func (stack *Stack) GetType() int64 {
+	return stack.typeLex
+}
+func (stack *Stack) GetPriority() int64 {
+	return stack.priority
+}
+func (stack *Stack) GetValue() float64 {
+	return stack.value
 }

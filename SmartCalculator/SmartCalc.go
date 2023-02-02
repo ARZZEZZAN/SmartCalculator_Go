@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Calculations"
 	"List"
 	"bufio"
 	"errors"
@@ -92,7 +93,7 @@ func findAndRemoveNumber(s *string) (float64, error) {
 }
 func smartCalc(str string) {
 	numbers := List.Stack{}
-	//operations := List.Stack{}
+	operations := List.Stack{}
 	rangeStr := len(str)
 	for i := 0; i <= rangeStr; i++ {
 		str = strings.ReplaceAll(str, " ", "")
@@ -106,14 +107,70 @@ func smartCalc(str string) {
 		// parse lexemes
 		if len(str) >= 1 {
 			tmp, _ := parseLexemes(&str)
-			fmt.Printf("Tmp: %v\n", tmp)
+			priority(&numbers, &operations, tmp)
 		}
 		if len(str) == 0 {
 			break
 		}
 	}
 }
+func priority(numbers *List.Stack, operations *List.Stack, tmp List.Stack) {
+	topStack := &List.Stack{}
+	if operations.Next != nil {
+		topStack = operations.Top()
+	} else {
+		topStack.Push(0, 0, -1)
+	}
+	fmt.Println(topStack.GetPriority())
+	if tmp.GetType() == List.LEFTScobe_LEXEME {
+		operations.Push(0, List.LEFTScobe_LEXEME, -1)
+	} else if tmp.GetPriority() > topStack.GetPriority() &&
+		tmp.GetType() != List.RIGHTScobe_LEXEME {
+		operations.Push(0, List.LEFTScobe_LEXEME, tmp.GetPriority())
+	} else if tmp.GetPriority() <= topStack.GetPriority() &&
+		tmp.GetType() != List.RIGHTScobe_LEXEME && tmp.GetType() != List.LEFTScobe_LEXEME {
+		calculation(operations, numbers)
+		operations.Push(0, tmp.GetType(), tmp.GetPriority())
+	} else if tmp.GetType() == List.RIGHTScobe_LEXEME {
+		for (operations != nil) && operations.GetType() != List.LEFTScobe_LEXEME {
+			calculation(operations, numbers)
+		}
+		operations.Pop()
+	}
+}
+func calculation(operations *List.Stack, numbers *List.Stack) {
+	operation := &List.Stack{}
+	operation = operations.Top()
+	operations.Pop()
 
+	operand1 := &List.Stack{}
+	operand2 := &List.Stack{}
+	fmt.Println(operation.GetType())
+	// For Understanding the operation because of my structure
+	if operation.GetType() > 8 {
+		operand2 = numbers.Top()
+		numbers.Pop()
+	} else {
+		operand1 = numbers.Top()
+		numbers.Pop()
+		operand2 = numbers.Top()
+		numbers.Pop()
+	}
+	result := &List.Stack{}
+	resultStrategy := &Calculations.Context{}
+
+	if operation.GetType() <= 8 {
+		resultStrategy.SetStrategy(Calculations.NewStrategy("operation"))
+		result = resultStrategy.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType())
+		fmt.Println(result.Next)
+	} else {
+		resultStrategy.SetStrategy(Calculations.NewStrategy("function"))
+		result = resultStrategy.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType())
+		fmt.Println(result.Next)
+	}
+
+	numbers.Push(result.GetValue(), result.GetType(), result.GetPriority())
+}
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
