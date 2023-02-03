@@ -17,55 +17,55 @@ func parseLexemes(str *string) (List.Stack, error) {
 	result := List.Stack{}
 	// very big if statements, sorry!
 	if (*str)[0] == '+' {
-		result.SetStack(0, List.PLUS_LEXEME, 1)
+		result.SetStack(0, Calculations.PLUS_LEXEME, 1)
 		*str = (*str)[1:]
 	} else if (*str)[0] == '-' {
-		result.SetStack(0, List.MINUS_LEXEME, 1)
+		result.SetStack(0, Calculations.MINUS_LEXEME, 1)
 		*str = (*str)[1:]
 	} else if (*str)[0] == '*' {
-		result.SetStack(0, List.MUL_LEXEME, 2)
+		result.SetStack(0, Calculations.MUL_LEXEME, 2)
 		*str = (*str)[1:]
 	} else if (*str)[0] == '/' {
-		result.SetStack(0, List.DIV_LEXEME, 2)
+		result.SetStack(0, Calculations.DIV_LEXEME, 2)
 		*str = (*str)[1:]
 	} else if (*str)[0] == '^' {
-		result.SetStack(0, List.POW_LEXEME, 3)
+		result.SetStack(0, Calculations.POW_LEXEME, 3)
 		*str = (*str)[1:]
 	} else if (*str)[0] == '(' {
-		result.SetStack(0, List.LEFTScobe_LEXEME, -1)
+		result.SetStack(0, Calculations.LEFTScobe_LEXEME, -1)
 		*str = (*str)[1:]
 	} else if (*str)[0] == ')' {
-		result.SetStack(0, List.RIGHTScobe_LEXEME, -1)
+		result.SetStack(0, Calculations.RIGHTScobe_LEXEME, -1)
 		*str = (*str)[1:]
 	} else if (*str)[0:3] == "mod" {
-		result.SetStack(0, List.MOD_LEXEME, 3)
+		result.SetStack(0, Calculations.MOD_LEXEME, 3)
 		*str = (*str)[3:]
 	} else if (*str)[0:3] == "sin" {
-		result.SetStack(0, List.SIN_LEXEME, 4)
+		result.SetStack(0, Calculations.SIN_LEXEME, 4)
 		*str = (*str)[3:]
 	} else if (*str)[0:3] == "cos" {
-		result.SetStack(0, List.COS_LEXEME, 4)
+		result.SetStack(0, Calculations.COS_LEXEME, 4)
 		*str = (*str)[3:]
 	} else if (*str)[0:3] == "tan" {
-		result.SetStack(0, List.TAN_LEXEME, 4)
+		result.SetStack(0, Calculations.TAN_LEXEME, 4)
 		*str = (*str)[3:]
 	} else if (*str)[0:3] == "log" {
-		result.SetStack(0, List.LOG_LEXEME, 4)
+		result.SetStack(0, Calculations.LOG_LEXEME, 4)
 		*str = (*str)[3:]
 	} else if (*str)[0:2] == "ln" {
-		result.SetStack(0, List.LN_LEXEME, 4)
+		result.SetStack(0, Calculations.LN_LEXEME, 4)
 		*str = (*str)[3:]
 	} else if (*str)[0:4] == "asin" {
-		result.SetStack(0, List.ASIN_LEXEME, 4)
+		result.SetStack(0, Calculations.ASIN_LEXEME, 4)
 		*str = (*str)[4:]
 	} else if (*str)[0:4] == "acos" {
-		result.SetStack(0, List.ACOS_LEXEME, 4)
+		result.SetStack(0, Calculations.ACOS_LEXEME, 4)
 		*str = (*str)[4:]
 	} else if (*str)[0:4] == "atan" {
-		result.SetStack(0, List.ATAN_LEXEME, 4)
+		result.SetStack(0, Calculations.ATAN_LEXEME, 4)
 		*str = (*str)[4:]
 	} else if (*str)[0:4] == "sqrt" {
-		result.SetStack(0, List.SQRT_LEXEME, 4)
+		result.SetStack(0, Calculations.SQRT_LEXEME, 4)
 		*str = (*str)[4:]
 	}
 	return result, err
@@ -102,7 +102,7 @@ func smartCalc(str string) {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			numbers.Push(value, List.DIG_LEXEME, 0)
+			numbers.Push(value, Calculations.DIG_LEXEME, 0)
 		}
 		// parse lexemes
 		if len(str) >= 1 {
@@ -113,6 +113,10 @@ func smartCalc(str string) {
 			break
 		}
 	}
+	for operations.Next != nil && numbers.Next != nil {
+		calculation(&operations, &numbers)
+	}
+	fmt.Printf("The result of this expression: %v", numbers.Next.GetValue())
 }
 func priority(numbers *List.Stack, operations *List.Stack, tmp List.Stack) {
 	topStack := &List.Stack{}
@@ -121,17 +125,17 @@ func priority(numbers *List.Stack, operations *List.Stack, tmp List.Stack) {
 	} else {
 		topStack.Push(0, 0, -1)
 	}
-	if tmp.GetType() == List.LEFTScobe_LEXEME {
-		operations.Push(0, List.LEFTScobe_LEXEME, -1)
+	if tmp.GetType() == Calculations.LEFTScobe_LEXEME {
+		operations.Push(0, Calculations.LEFTScobe_LEXEME, -1)
 	} else if tmp.GetPriority() > topStack.GetPriority() &&
-		tmp.GetType() != List.RIGHTScobe_LEXEME {
+		tmp.GetType() != Calculations.RIGHTScobe_LEXEME {
 		operations.Push(0, tmp.GetType(), tmp.GetPriority())
 	} else if tmp.GetPriority() <= topStack.GetPriority() &&
-		tmp.GetType() != List.RIGHTScobe_LEXEME && tmp.GetType() != List.LEFTScobe_LEXEME {
+		tmp.GetType() != Calculations.RIGHTScobe_LEXEME && tmp.GetType() != Calculations.LEFTScobe_LEXEME {
 		calculation(operations, numbers)
 		operations.Push(0, tmp.GetType(), tmp.GetPriority())
-	} else if tmp.GetType() == List.RIGHTScobe_LEXEME {
-		for (operations != nil) && operations.GetType() != List.LEFTScobe_LEXEME {
+	} else if tmp.GetType() == Calculations.RIGHTScobe_LEXEME {
+		for (operations != nil) && operations.GetType() != Calculations.LEFTScobe_LEXEME {
 			calculation(operations, numbers)
 		}
 		operations.Pop()
@@ -144,7 +148,6 @@ func calculation(operations *List.Stack, numbers *List.Stack) {
 
 	operand1 := &List.Stack{}
 	operand2 := &List.Stack{}
-	fmt.Println(operation.GetType())
 	// For Understanding the operation because of my structure
 	if operation.GetType() > 8 {
 		operand2 = numbers.Top()
@@ -159,12 +162,9 @@ func calculation(operations *List.Stack, numbers *List.Stack) {
 	if operation.GetType() <= 8 {
 		result.Context.SetStrategy(Calculations.NewStrategy("operation"))
 		result.SetValue(result.Context.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType()))
-		fmt.Println(result.GetValue())
 	} else {
-		fmt.Println(operation.GetType())
 		result.Context.SetStrategy(Calculations.NewStrategy("function"))
 		result.SetValue(result.Context.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType()))
-		fmt.Println(result.GetValue())
 	}
 
 	numbers.Push(result.GetValue(), result.GetType(), result.GetPriority())

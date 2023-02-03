@@ -2,29 +2,6 @@ package List
 
 import "Calculations"
 
-const (
-	DIG_LEXEME = iota + 1
-	MINUS_LEXEME
-	PLUS_LEXEME
-	DIV_LEXEME
-	MUL_LEXEME
-	POW_LEXEME
-	MOD_LEXEME
-	UNARM_LEXEME
-	UNARP_LEXEME
-	COS_LEXEME
-	SIN_LEXEME
-	TAN_LEXEME
-	ACOS_LEXEME
-	ASIN_LEXEME
-	ATAN_LEXEME
-	SQRT_LEXEME
-	LN_LEXEME
-	LOG_LEXEME
-	LEFTScobe_LEXEME
-	RIGHTScobe_LEXEME
-)
-
 type Stack struct {
 	value    float64
 	priority int64
