@@ -1,40 +1,34 @@
 package Calculations
 
-import (
-	"List"
-)
-
 type StrategyCalculation interface {
-	Calculate(num, num2 float64, typeLex int64) *List.Stack
+	Calculate(num, num2 float64, typeLex int64) float64
 }
 type Operations struct {
-	Result *List.Stack
 }
 type Functions struct {
-	Result *List.Stack
 }
 
-func (oper *Operations) Calculate(num, num2 float64, typeLex int64) *List.Stack {
-	result := &List.Stack{}
-	result.Push(1, 1, 1)
+func (oper *Operations) Calculate(num, num2 float64, typeLex int64) float64 {
+	var result float64
+	result = 5.0
 	//if (result.GetType() == List.PLUS_LEXEME) {
 	//	result.GetValue() = num1 + num2
-	//} else if (type == MINUS_LEXEME) {
+	//} else if (typeLex == MINUS_LEXEME) {
 	//	result.value = num1 - num2;
-	//} else if (type == DIV_LEXEME) {
+	//} else if (typeLex == DIV_LEXEME) {
 	//	result.value = num1 / num2;
-	//} else if (type == MUL_LEXEME) {
+	//} else if (typeLex == MUL_LEXEME) {
 	//	result.value = num1 * num2;
-	//} else if (type == POW_LEXEME) {
+	//} else if (typeLex == POW_LEXEME) {
 	//	result.value = pow(num1, num2);
-	//} else if (type == MOD_LEXEME) {
+	//} else if (typeLex == MOD_LEXEME) {
 	//	result.value = fmod(num1, num2);
 	//}
 	return result
 }
-func (oper *Functions) Calculate(num, num2 float64, typeLex int64) *List.Stack {
-	result := &List.Stack{}
-	result.Push(2, 2, 2)
+func (oper *Functions) Calculate(num, num2 float64, typeLex int64) float64 {
+	var result float64
+	result = 6.0
 	return result
 }
 
@@ -69,7 +63,7 @@ type Context struct {
 func (c *Context) SetStrategy(a StrategyCalculation) {
 	c.strategy = a
 }
-func (c *Context) Calculate(num1, num2 float64, typeLex int64) *List.Stack {
+func (c *Context) Calculate(num1, num2 float64, typeLex int64) float64 {
 	return c.strategy.Calculate(num1, num2, typeLex)
 }
 func NewStrategy(strategyType string) StrategyCalculation {

@@ -121,12 +121,11 @@ func priority(numbers *List.Stack, operations *List.Stack, tmp List.Stack) {
 	} else {
 		topStack.Push(0, 0, -1)
 	}
-	fmt.Println(topStack.GetPriority())
 	if tmp.GetType() == List.LEFTScobe_LEXEME {
 		operations.Push(0, List.LEFTScobe_LEXEME, -1)
 	} else if tmp.GetPriority() > topStack.GetPriority() &&
 		tmp.GetType() != List.RIGHTScobe_LEXEME {
-		operations.Push(0, List.LEFTScobe_LEXEME, tmp.GetPriority())
+		operations.Push(0, tmp.GetType(), tmp.GetPriority())
 	} else if tmp.GetPriority() <= topStack.GetPriority() &&
 		tmp.GetType() != List.RIGHTScobe_LEXEME && tmp.GetType() != List.LEFTScobe_LEXEME {
 		calculation(operations, numbers)
@@ -157,16 +156,15 @@ func calculation(operations *List.Stack, numbers *List.Stack) {
 		numbers.Pop()
 	}
 	result := &List.Stack{}
-	resultStrategy := &Calculations.Context{}
-
 	if operation.GetType() <= 8 {
-		resultStrategy.SetStrategy(Calculations.NewStrategy("operation"))
-		result = resultStrategy.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType())
-		fmt.Println(result.Next)
+		result.Context.SetStrategy(Calculations.NewStrategy("operation"))
+		result.SetValue(result.Context.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType()))
+		fmt.Println(result.GetValue())
 	} else {
-		resultStrategy.SetStrategy(Calculations.NewStrategy("function"))
-		result = resultStrategy.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType())
-		fmt.Println(result.Next)
+		fmt.Println(operation.GetType())
+		result.Context.SetStrategy(Calculations.NewStrategy("function"))
+		result.SetValue(result.Context.Calculate(operand2.GetValue(), operand1.GetValue(), operation.GetType()))
+		fmt.Println(result.GetValue())
 	}
 
 	numbers.Push(result.GetValue(), result.GetType(), result.GetPriority())

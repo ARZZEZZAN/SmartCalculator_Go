@@ -1,5 +1,7 @@
 package List
 
+import "Calculations"
+
 const (
 	DIG_LEXEME = iota + 1
 	MINUS_LEXEME
@@ -28,6 +30,7 @@ type Stack struct {
 	priority int64
 	typeLex  int64
 	Next     *Stack
+	Context  Calculations.Context
 }
 
 func (stack *Stack) Push(value float64, typeLex int64, priority int64) {
@@ -64,4 +67,8 @@ func (stack *Stack) GetPriority() int64 {
 }
 func (stack *Stack) GetValue() float64 {
 	return stack.value
+}
+
+func (stack *Stack) SetValue(value float64) {
+	stack.value = value
 }
